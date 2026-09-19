@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+<title>Road Dash — Free Car Dodging Game</title>
+<meta name="description" content="Road Dash is a free, fast-paced browser car dodging game. Play instantly on desktop or mobile — no download required.">
+<meta name="theme-color" content="#0b1120">
+
+<!-- Open Graph / social preview -->
+<meta property="og:title" content="Road Dash — Free Car Dodging Game">
+<meta property="og:description" content="Dodge traffic and survive as long as you can. Free to play, works on any device.">
+<meta property="og:type" content="website">
+
+<!-- PWA-ish niceties for mobile -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='26'%3E%F0%9F%8F%8E%3C/text%3E%3C/svg%3E">
+
+<!-- ==== GOOGLE ADSENSE (replace ca-pub-XXXXXXXXXXXXXXXX with your own publisher ID) ==== -->
+<!-- Also powers the Ad Placement API (H5 games ad breaks) used in game.js — see README for setup. -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+<script>
+  window.adsbygoogle = window.adsbygoogle || [];
+  window.adBreak = window.adBreak || function (o) { window.adsbygoogle.push(o); };
+</script>
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg-0: #060a14;
+    --bg-1: #0d1526;
+    --panel: #101a30;
+    --panel-border: #1e2b47;
+    --accent: #22e08a;
+    --accent-dark: #0c3d28;
+    --danger: #ff5470;
+    --text: #eef2fb;
+    --text-dim: #7d8bab;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+
+  body[data-theme="day"] {
+    --bg-0: #cfe8ff;
+    --bg-1: #eaf6ff;
+    --panel: #ffffff;
+    --panel-border: #cbd9ee;
+    --text: #14213d;
+    --text-dim: #5b6b8c;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 50% -10%, var(--bg-1), var(--bg-0) 70%);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+    user-select: none;
+  }
+
+  header {
+    padding: 18px 16px 6px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff, #9db4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header p {
+    margin: 4px 0 0;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+
+  .layout {
+    display: flex;
+    gap: 18px;
+    width: 100%;
+    max-width: 1160px;
+    padding: 10px 12px 24px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .game-wrap {
+    position: relative;
+    flex: 0 0 auto;
+    width: min(420px, 96vw);
+    aspect-ratio: 3 / 5;
+    border-radius: 20px;
+    padding: 3px;
+    background: linear-gradient(160deg, #2a3a63, #0e1730);
+    box-shadow:
+      0 20px 60px -20px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 18px;
+    touch-action: none;
+  }
+
+  .hud {
+    position: absolute;
+    top: 14px; left: 14px; right: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .hud .chip {
+    background: rgba(6, 10, 20, 0.55);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+  .hud .chip.score { color: var(--accent); }
+  .hud .chip.best { color: var(--text-dim); }
+  .hud .chip.combo {
+    color: #ffd166;
+    display: none;
+  }
+  .hud .chip.combo.show { display: inline-block; }
+
+  .pause-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 4;
+    display: none;
+  }
+
+  .top-controls {
+    position: absolute;
+    top: 14px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 14px;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .icon-btn {
+    pointer-events: auto;
+    background: rgba(6, 10, 20, 0.55);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text);
+    border-radius: 999px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .icon-btn:active { transform: scale(0.92); }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 9, 18, 0.92);
+    backdrop-filter: blur(3px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    border-radius: 18px;
+    padding: 24px;
+    z-index: 5;
+    transition: opacity 0.2s ease;
+  }
+  .overlay.hidden { display: none; }
+  .overlay h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+  .overlay .big-emoji { font-size: 2.6rem; line-height: 1; }
+  .overlay button {
+    padding: 13px 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2af0a0, #22c55e);
+    color: #05210f;
+    cursor: pointer;
+    box-shadow: 0 8px 20px -6px rgba(34, 197, 94, 0.55);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .overlay button:hover { transform: translateY(-1px); }
+  .overlay button:active { transform: scale(0.96); }
+  .overlay .hint { font-size: 0.78rem; color: var(--text-dim); max-width: 280px; line-height: 1.5; }
+  .overlay .stat-row {
+    display: flex;
+    gap: 22px;
+    font-size: 0.95rem;
+  }
+  .overlay .stat-row .stat b {
+    display: block;
+    font-size: 1.4rem;
+    color: var(--accent);
+  }
+  .overlay .stat-row .stat.crash b { color: var(--danger); }
+  .new-best-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ffd166;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .ghost-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.18);
+    color: var(--text-dim);
+    padding: 9px 20px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .ghost-btn:active { transform: scale(0.96); }
+  .revive-btn {
+    border-color: #ffd166;
+    color: #ffd166;
+    font-weight: 700;
+  }
+  .revive-btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .revive-btn.hidden { display: none; }
+
+  .difficulty-row {
+    display: flex;
+    gap: 8px;
+  }
+  .diff-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-dim);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .diff-btn.active {
+    background: linear-gradient(135deg, #2af0a0, #22c55e);
+    color: #05210f;
+    border-color: transparent;
+  }
+
+  .theme-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .theme-row button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+
+  .leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 220px;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .leaderboard-list li {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.04);
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+  .leaderboard-list li .rank { color: var(--text-dim); font-weight: 700; width: 20px; }
+  .leaderboard-list li b { color: var(--accent); }
+  .leaderboard-list .empty { justify-content: center; color: var(--text-dim); }
+
+  /* Touch control pad, shown only on touch devices */
+  .touch-controls {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    display: none;
+    justify-content: space-between;
+    z-index: 4;
+    gap: 12px;
+  }
+  .touch-btn {
+    flex: 1;
+    max-width: 120px;
+    height: 58px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text);
+    -webkit-user-select: none;
+  }
+  .touch-btn:active {
+    background: rgba(255,255,255,0.16);
+    transform: scale(0.96);
+  }
+
+  body.touch-device .touch-controls { display: flex; }
+
+  .ad-slot {
+    flex: 1 1 250px;
+    min-width: 250px;
+    max-width: 300px;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--panel);
+    border: 1px dashed var(--panel-border);
+    border-radius: 14px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    align-self: center;
+  }
+
+  footer {
+    padding: 8px 16px 20px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-align: center;
+  }
+  footer a { color: var(--text-dim); }
+
+  @media (max-width: 720px) {
+    .ad-slot { max-width: 92vw; min-height: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚗 Road Dash</h1>
+  <p>Dodge traffic, grab coins, chase your best run — free, instant, no install.</p>
+</header>
+
+<main class="layout">
+
+  <div class="ad-slot" aria-label="advertisement">
+    <!-- Replace this comment with your <ins class="adsbygoogle"> unit -->
+    Advertisement
+  </div>
+
+  <div class="game-wrap">
+    <canvas id="gameCanvas" aria-label="Road Dash game canvas" role="img"></canvas>
+
+    <div class="top-controls">
+      <button class="icon-btn" id="pauseBtn" aria-label="Pause">⏸</button>
+      <div style="display:flex; gap:8px; pointer-events:auto;">
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+        <button class="icon-btn" id="soundBtn" aria-label="Toggle sound">🔊</button>
+      </div>
+    </div>
+
+    <div class="hud">
+      <span class="chip score" id="scoreDisplay">0</span>
+      <span class="chip combo" id="comboDisplay">x2 COMBO</span>
+      <span class="chip best" id="bestDisplay">BEST 0</span>
+    </div>
+
+    <div class="overlay" id="startOverlay">
+      <div class="big-emoji">🏁</div>
+      <h2>Road Dash</h2>
+      <p class="hint">Dodge traffic, collect gold coins, grab the shield power-up. Speed ramps the longer you survive.</p>
+
+      <div class="difficulty-row" id="difficultyRow">
+        <button class="diff-btn" data-diff="easy">Easy</button>
+        <button class="diff-btn active" data-diff="normal">Normal</button>
+        <button class="diff-btn" data-diff="hard">Hard</button>
+      </div>
+
+      <button id="startBtn">Start Game</button>
+      <p class="hint">Desktop: ← → or A / D. Mobile: swipe or tap the arrows. P to pause.</p>
+      <button class="ghost-btn" id="showLeaderboardBtn">🏆 Leaderboard</button>
+    </div>
+
+    <div class="overlay hidden" id="pauseOverlay">
+      <div class="big-emoji">⏸</div>
+      <h2>Paused</h2>
+      <button id="resumeBtn">Resume</button>
+      <button class="ghost-btn" id="quitBtn">Quit to menu</button>
+    </div>
+
+    <div class="overlay hidden" id="gameOverOverlay">
+      <div class="big-emoji">💥</div>
+      <h2>Crashed!</h2>
+      <div class="new-best-badge hidden" id="newBestBadge">New Best!</div>
+      <div class="stat-row">
+        <div class="stat crash"><b id="finalScoreVal">0</b>score</div>
+        <div class="stat"><b id="finalCoinsVal">0</b>coins</div>
+        <div class="stat"><b id="finalBestVal">0</b>best</div>
+      </div>
+      <button id="reviveBtn" class="ghost-btn revive-btn">📺 Watch Ad to Continue</button>
+      <button id="retryBtn">Play Again</button>
+      <button class="ghost-btn" id="menuBtn">Main menu</button>
+    </div>
+
+    <div class="overlay hidden" id="leaderboardOverlay">
+      <div class="big-emoji">🏆</div>
+      <h2>Top Scores</h2>
+      <ul class="leaderboard-list" id="leaderboardList"></ul>
+      <button class="ghost-btn" id="closeLeaderboardBtn">Close</button>
+    </div>
+
+    <div class="touch-controls" aria-hidden="true">
+      <div class="touch-btn" id="leftBtn">⟵</div>
+      <div class="touch-btn" id="rightBtn">⟶</div>
+    </div>
+  </div>
+
+  <div class="ad-slot" aria-label="advertisement">
+    Advertisement
+  </div>
+
+</main>
+
+<footer>
+  Road Dash — a free browser game. No account, no download.
+</footer>
+
+<script src="game.js"></script>
+</body>
+</html>
