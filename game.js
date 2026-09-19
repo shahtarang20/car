@@ -28,12 +28,24 @@
   const showLeaderboardBtn = document.getElementById('showLeaderboardBtn');
   const closeLeaderboardBtn = document.getElementById('closeLeaderboardBtn');
   const reviveBtn = document.getElementById('reviveBtn');
+  const streakLine = document.getElementById('streakLine');
+  const showGarageBtn = document.getElementById('showGarageBtn');
+  const closeGarageBtn = document.getElementById('closeGarageBtn');
+  const garageOverlay = document.getElementById('garageOverlay');
+  const skinGrid = document.getElementById('skinGrid');
+  const walletVal = document.getElementById('walletVal');
+  const showAchievementsBtn = document.getElementById('showAchievementsBtn');
+  const closeAchievementsBtn = document.getElementById('closeAchievementsBtn');
+  const achievementsOverlay = document.getElementById('achievementsOverlay');
+  const achievementsList = document.getElementById('achievementsList');
+  const toastStack = document.getElementById('toastStack');
 
   const BEST_KEY = 'roaddash_best_score';
   const SOUND_KEY = 'roaddash_sound_on';
   const THEME_KEY = 'roaddash_theme';
   const SCORES_KEY = 'roaddash_leaderboard';
   const DIFF_KEY = 'roaddash_difficulty';
+  const STATS_KEY = 'roaddash_stats';
 
   const LANES = 3;
   const ROAD_MARGIN_RATIO = 0.06;
@@ -44,10 +56,31 @@
     hard:   { speedMul: 1.3,  spawnMul: 0.78, label: 'Hard'   },
   };
 
+  const CAR_SKINS = [
+    { id: 'classic',  name: 'Classic',  cost: 0,   c1: '#2af0a0', c2: '#0f9d58' },
+    { id: 'crimson',  name: 'Crimson',  cost: 150, c1: '#ff6b81', c2: '#c0392b' },
+    { id: 'azure',    name: 'Azure',    cost: 150, c1: '#5dd5ff', c2: '#1a73e8' },
+    { id: 'gold',     name: 'Gold Rush',cost: 300, c1: '#ffe066', c2: '#e6a817' },
+    { id: 'violet',   name: 'Violet',   cost: 300, c1: '#c58bff', c2: '#7c3aed' },
+    { id: 'obsidian', name: 'Obsidian', cost: 500, c1: '#8b97b8', c2: '#1c2438' },
+  ];
+
+  const ACHIEVEMENTS = [
+    { id: 'first_run',   icon: '🚦', name: 'First Drive',      desc: 'Play your first run',              check: s => s.gamesPlayed >= 1 },
+    { id: 'coin_100',    icon: '🪙', name: 'Coin Collector',   desc: 'Collect 100 coins lifetime',        check: s => s.lifetimeCoins >= 100 },
+    { id: 'coin_500',    icon: '💰', name: 'Coin Hoarder',     desc: 'Collect 500 coins lifetime',        check: s => s.lifetimeCoins >= 500 },
+    { id: 'combo_5',     icon: '🔥', name: 'Combo Master',     desc: 'Reach x5.0 combo in a run',         check: s => s.bestCombo >= 5 },
+    { id: 'survive_60',  icon: '⏱️', name: 'Road Warrior',     desc: 'Survive 60 seconds in one run',     check: s => s.bestSurvival >= 60 },
+    { id: 'survive_120', icon: '🏆', name: 'Endurance Driver', desc: 'Survive 120 seconds in one run',    check: s => s.bestSurvival >= 120 },
+    { id: 'near_10',     icon: '😅', name: 'Close Call',       desc: '10 near-misses in a single run',    check: s => s.bestNearMiss >= 10 },
+    { id: 'streak_3',    icon: '📅', name: 'Regular',          desc: 'Reach a 3-day play streak',         check: s => s.bestStreak >= 3 },
+    { id: 'streak_7',    icon: '🌟', name: 'Dedicated',        desc: 'Reach a 7-day play streak',         check: s => s.bestStreak >= 7 },
+  ];
+
   let cssW = 360, cssH = 600, dpr = 1;
   let roadMargin, roadWidth, laneWidth;
 
-  let player, obstacles, particles, coins, powerUps, streetlights;
+  let player, obstacles, particles, coins, powerUps, streetlights, floatTexts;
   let score, coinsCollected, best, speed, running, paused;
   let lastSpawn, lastCoinSpawn, lastPowerSpawn, lastTime, roadOffset, soundOn, theme;
   let difficulty = 'normal';
@@ -56,6 +89,11 @@
   let shakeTime = 0, shakeMag = 0;
   let isTouchDevice = false;
   let reviveUsed = false;
+  let runStartTime = 0;
+  let nearMissCount = 0;
+  let flashAlpha = 0;
+  let stats = null;
+  let selectedSkin = 'classic';
 
   // ---------- ad breaks (Google Ad Placement API for HTML5 games) ----------
   // Docs: https://developers.google.com/ad-placement
@@ -151,6 +189,7 @@
     player = { lane: 1, x: laneCenterX(1), targetX: laneCenterX(1), y: cssH - h - cssH * 0.08, w, h, tilt: 0 };
     obstacles = [];
     particles = [];
+    floatTexts = [];
     coins = [];
     powerUps = [];
     streetlights = [];
@@ -159,6 +198,8 @@
     }
     score = 0;
     coinsCollected = 0;
+    nearMissCount = 0;
+    flashAlpha = 0;
     const diff = DIFFICULTIES[difficulty];
     speed = cssH * 0.36 * diff.speedMul;
     lastSpawn = 0;
@@ -167,11 +208,13 @@
     roadOffset = 0;
     combo = 1;
     comboTimer = 0;
-    shieldTime = 0;
+    // Daily-streak bonus: a couple of free shield seconds to start the run.
+    shieldTime = stats.streak >= 2 ? Math.min(3, stats.streak * 0.5) : 0;
     shakeTime = 0;
     running = true;
     paused = false;
     reviveUsed = false;
+    runStartTime = performance.now();
     comboDisplay.classList.remove('show');
   }
 
@@ -214,6 +257,128 @@
     [...difficultyRow.children].forEach(btn => {
       btn.classList.toggle('active', btn.dataset.diff === difficulty);
     });
+  }
+
+  // ---------- persistent stats: streaks, achievements, wallet ----------
+  function defaultStats() {
+    return {
+      gamesPlayed: 0,
+      lifetimeCoins: 0,
+      coinBank: 0,
+      bestCombo: 1,
+      bestSurvival: 0,
+      bestNearMiss: 0,
+      streak: 0,
+      bestStreak: 0,
+      lastPlayedDate: null,
+      unlockedSkins: ['classic'],
+      selectedSkin: 'classic',
+      unlockedAchievements: [],
+    };
+  }
+
+  function loadStats() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(STATS_KEY));
+      stats = raw ? { ...defaultStats(), ...raw } : defaultStats();
+    } catch {
+      stats = defaultStats();
+    }
+    selectedSkin = stats.selectedSkin || 'classic';
+  }
+  function saveStats() {
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  }
+
+  function dateKey(d) {
+    return d.toISOString().slice(0, 10);
+  }
+
+  // Updates the daily streak once per calendar day and returns a bonus
+  // (extra starting shield seconds) for today's session.
+  function applyDailyStreak() {
+    const today = dateKey(new Date());
+    if (stats.lastPlayedDate === today) return;
+    const yesterday = dateKey(new Date(Date.now() - 86400000));
+    stats.streak = stats.lastPlayedDate === yesterday ? stats.streak + 1 : 1;
+    stats.lastPlayedDate = today;
+    stats.bestStreak = Math.max(stats.bestStreak, stats.streak);
+    saveStats();
+  }
+
+  function renderStreakBanner() {
+    if (stats.streak >= 2) {
+      streakLine.textContent = `🔥 Day ${stats.streak} streak — bonus starting shield!`;
+      streakLine.classList.remove('hidden');
+    } else {
+      streakLine.classList.add('hidden');
+    }
+  }
+
+  function showToast(icon, title, desc) {
+    const el = document.createElement('div');
+    el.className = 'achv-toast';
+    el.innerHTML = `<span class="icon">${icon}</span><span><b>${title}</b><span class="desc">${desc}</span></span>`;
+    toastStack.appendChild(el);
+    setTimeout(() => el.remove(), 3100);
+  }
+
+  function checkAchievements() {
+    for (const a of ACHIEVEMENTS) {
+      if (!stats.unlockedAchievements.includes(a.id) && a.check(stats)) {
+        stats.unlockedAchievements.push(a.id);
+        showToast(a.icon, 'Achievement unlocked!', a.name);
+      }
+    }
+    saveStats();
+  }
+
+  function renderAchievements() {
+    achievementsList.innerHTML = '';
+    for (const a of ACHIEVEMENTS) {
+      const unlocked = stats.unlockedAchievements.includes(a.id);
+      const li = document.createElement('li');
+      li.style.opacity = unlocked ? '1' : '0.45';
+      li.innerHTML = `<span>${a.icon} <b style="color:inherit">${a.name}</b><br><span style="font-size:0.7rem;color:var(--text-dim)">${a.desc}</span></span><span>${unlocked ? '✅' : '🔒'}</span>`;
+      achievementsList.appendChild(li);
+    }
+  }
+
+  function renderGarage() {
+    walletVal.textContent = stats.coinBank;
+    skinGrid.innerHTML = '';
+    for (const skin of CAR_SKINS) {
+      const unlocked = stats.unlockedSkins.includes(skin.id);
+      const card = document.createElement('div');
+      card.className = 'skin-card' + (unlocked ? '' : ' locked') + (selectedSkin === skin.id ? ' selected' : '');
+      card.innerHTML = `
+        <div class="skin-swatch" style="background:linear-gradient(135deg, ${skin.c1}, ${skin.c2})"></div>
+        <div>${skin.name}</div>
+        <div>${unlocked ? (selectedSkin === skin.id ? 'Equipped' : 'Tap to equip') : `<span class="skin-cost">🪙 ${skin.cost}</span>`}</div>
+      `;
+      card.addEventListener('click', () => {
+        if (unlocked) {
+          selectedSkin = skin.id;
+          stats.selectedSkin = skin.id;
+          saveStats();
+          renderGarage();
+        } else if (stats.coinBank >= skin.cost) {
+          stats.coinBank -= skin.cost;
+          stats.unlockedSkins.push(skin.id);
+          selectedSkin = skin.id;
+          stats.selectedSkin = skin.id;
+          saveStats();
+          renderGarage();
+          showToast('🚘', 'New skin unlocked!', skin.name);
+        }
+      });
+      skinGrid.appendChild(card);
+    }
+  }
+
+  function currentSkinColors() {
+    const skin = CAR_SKINS.find(s => s.id === selectedSkin) || CAR_SKINS[0];
+    return [skin.c1, skin.c2];
   }
 
   function loadScores() {
@@ -285,6 +450,10 @@
     }
   }
 
+  function spawnFloatText(x, y, text, color) {
+    floatTexts.push({ x, y, text, color, age: 0, life: 0.8 });
+  }
+
   function spawnExhaust() {
     particles.push({
       x: player.x + (Math.random() - 0.5) * player.w * 0.4,
@@ -332,6 +501,24 @@
     if (Math.random() < dt * 14) spawnExhaust();
 
     for (const o of obstacles) o.y += speed * dt;
+
+    // Near-miss: an obstacle that slides past the player with only a small
+    // lateral gap and no collision — rewarded with bonus points + a flash.
+    for (const o of obstacles) {
+      if (o.nearMissChecked) continue;
+      if (o.y > player.y + player.h / 2) {
+        o.nearMissChecked = true;
+        const gap = Math.abs(o.x - player.x) - (o.w + player.w) / 2;
+        if (gap > 0 && gap < laneWidth * 0.35) {
+          nearMissCount++;
+          score += 15;
+          flashAlpha = 0.35;
+          spawnFloatText(player.x, player.y - player.h / 2, 'Close call! +15', '#ffd166');
+          beep(700, 0.07, 'square', 0.05);
+        }
+      }
+    }
+
     obstacles = obstacles.filter(o => o.y < cssH + o.h);
 
     for (const c of coins) { c.y += speed * dt; c.spin += dt * 6; }
@@ -348,12 +535,16 @@
     }
     particles = particles.filter(p => p.age < p.life);
 
+    for (const t of floatTexts) { t.age += dt; t.y -= dt * 40; }
+    floatTexts = floatTexts.filter(t => t.age < t.life);
+
     if (comboTimer > 0) {
       comboTimer -= dt;
       if (comboTimer <= 0) { combo = 1; comboDisplay.classList.remove('show'); }
     }
     if (shieldTime > 0) shieldTime -= dt;
     if (shakeTime > 0) shakeTime -= dt;
+    if (flashAlpha > 0) flashAlpha = Math.max(0, flashAlpha - dt * 1.8);
 
     score += dt * 12 * combo;
 
@@ -368,6 +559,7 @@
         comboDisplay.textContent = 'x' + combo.toFixed(1) + ' COMBO';
         comboDisplay.classList.add('show');
         spawnParticles(coins[i].x, coins[i].y, '#ffd166', 10);
+        spawnFloatText(coins[i].x, coins[i].y, '+40', '#ffd166');
         sfxCoin();
         coins.splice(i, 1);
       }
@@ -404,6 +596,17 @@
     sfxCrash();
     const isNew = saveBestIfNeeded();
     saveScore(score);
+
+    const survivalSecs = (performance.now() - runStartTime) / 1000;
+    stats.gamesPlayed += 1;
+    stats.lifetimeCoins += coinsCollected;
+    stats.coinBank += coinsCollected;
+    stats.bestCombo = Math.max(stats.bestCombo, combo);
+    stats.bestSurvival = Math.max(stats.bestSurvival, survivalSecs);
+    stats.bestNearMiss = Math.max(stats.bestNearMiss, nearMissCount);
+    saveStats();
+    checkAchievements();
+
     finalScoreVal.textContent = Math.floor(score);
     finalCoinsVal.textContent = coinsCollected;
     finalBestVal.textContent = best;
@@ -572,6 +775,18 @@
     ctx.globalAlpha = 1;
   }
 
+  function drawFloatTexts() {
+    ctx.textAlign = 'center';
+    ctx.font = '700 15px sans-serif';
+    for (const t of floatTexts) {
+      const p = t.age / t.life;
+      ctx.globalAlpha = Math.max(0, 1 - p);
+      ctx.fillStyle = t.color;
+      ctx.fillText(t.text, t.x, t.y);
+    }
+    ctx.globalAlpha = 1;
+  }
+
   function render() {
     ctx.save();
     if (shakeTime > 0) {
@@ -582,8 +797,16 @@
     for (const c of coins) drawCoin(c);
     for (const p of powerUps) drawPowerUp(p);
     for (const o of obstacles) drawCar(o.x, o.y, o.w, o.h, o.c1, o.c2, 0, false);
-    if (running) drawCar(player.x, player.y, player.w, player.h, '#2af0a0', '#0f9d58', player.tilt, shieldTime > 0);
+    if (running) {
+      const [c1, c2] = currentSkinColors();
+      drawCar(player.x, player.y, player.w, player.h, c1, c2, player.tilt, shieldTime > 0);
+    }
     drawParticles();
+    drawFloatTexts();
+    if (flashAlpha > 0) {
+      ctx.fillStyle = `rgba(255, 209, 102, ${flashAlpha})`;
+      ctx.fillRect(0, 0, cssW, cssH);
+    }
     ctx.restore();
     scoreDisplay.textContent = String(Math.floor(score));
   }
@@ -604,6 +827,8 @@
     gameOverOverlay.classList.add('hidden');
     pauseOverlay.classList.add('hidden');
     leaderboardOverlay.classList.add('hidden');
+    garageOverlay.classList.add('hidden');
+    achievementsOverlay.classList.add('hidden');
     pauseBtn.style.display = 'flex';
     resize();
     resetState();
@@ -759,6 +984,26 @@
     startOverlay.classList.remove('hidden');
   });
 
+  showGarageBtn.addEventListener('click', () => {
+    renderGarage();
+    startOverlay.classList.add('hidden');
+    garageOverlay.classList.remove('hidden');
+  });
+  closeGarageBtn.addEventListener('click', () => {
+    garageOverlay.classList.add('hidden');
+    startOverlay.classList.remove('hidden');
+  });
+
+  showAchievementsBtn.addEventListener('click', () => {
+    renderAchievements();
+    startOverlay.classList.add('hidden');
+    achievementsOverlay.classList.remove('hidden');
+  });
+  closeAchievementsBtn.addEventListener('click', () => {
+    achievementsOverlay.classList.add('hidden');
+    startOverlay.classList.remove('hidden');
+  });
+
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && running && !paused) togglePause(true);
   });
@@ -772,6 +1017,9 @@
   loadSound();
   loadTheme();
   loadDifficulty();
+  loadStats();
+  applyDailyStreak();
+  renderStreakBanner();
   resize();
   render();
 })();

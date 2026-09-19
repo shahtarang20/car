@@ -329,6 +329,102 @@
   .leaderboard-list li b { color: var(--accent); }
   .leaderboard-list .empty { justify-content: center; color: var(--text-dim); }
 
+  .menu-btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .streak-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 209, 102, 0.12);
+    border: 1px solid rgba(255, 209, 102, 0.35);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ffd166;
+  }
+  .streak-line.hidden { display: none; }
+
+  .wallet-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 176, 32, 0.12);
+    border: 1px solid rgba(255, 176, 32, 0.35);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffb020;
+  }
+
+  .skin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .skin-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+  .skin-card.selected { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .skin-card.locked { opacity: 0.55; }
+  .skin-swatch {
+    width: 100%;
+    height: 34px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .skin-cost { color: #ffb020; font-weight: 700; }
+
+  .toast-stack {
+    position: fixed;
+    top: calc(12px + var(--safe-top));
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .achv-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(16, 22, 40, 0.95);
+    border: 1px solid rgba(255, 209, 102, 0.4);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6);
+    animation: toast-in 0.25s ease, toast-out 0.3s ease 2.7s forwards;
+  }
+  .achv-toast .icon { font-size: 1.3rem; }
+  .achv-toast b { color: #ffd166; display: block; }
+  .achv-toast span.desc { color: var(--text-dim); font-size: 0.72rem; }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toast-out {
+    to { opacity: 0; transform: translateY(-12px); }
+  }
+
   /* Touch control pad, shown only on touch devices */
   .touch-controls {
     position: absolute;
@@ -431,6 +527,7 @@
     <div class="overlay" id="startOverlay">
       <div class="big-emoji">🏁</div>
       <h2>Road Dash</h2>
+      <div class="streak-line hidden" id="streakLine">🔥 Day 1 streak</div>
       <p class="hint">Dodge traffic, collect gold coins, grab the shield power-up. Speed ramps the longer you survive.</p>
 
       <div class="difficulty-row" id="difficultyRow">
@@ -441,7 +538,11 @@
 
       <button id="startBtn">Start Game</button>
       <p class="hint">Desktop: ← → or A / D. Mobile: swipe or tap the arrows. P to pause.</p>
-      <button class="ghost-btn" id="showLeaderboardBtn">🏆 Leaderboard</button>
+      <div class="menu-btn-row">
+        <button class="ghost-btn" id="showLeaderboardBtn">🏆 Leaderboard</button>
+        <button class="ghost-btn" id="showGarageBtn">🚘 Garage</button>
+        <button class="ghost-btn" id="showAchievementsBtn">🏅 Achievements</button>
+      </div>
     </div>
 
     <div class="overlay hidden" id="pauseOverlay">
@@ -472,6 +573,22 @@
       <button class="ghost-btn" id="closeLeaderboardBtn">Close</button>
     </div>
 
+    <div class="overlay hidden" id="garageOverlay">
+      <div class="big-emoji">🚘</div>
+      <h2>Garage</h2>
+      <div class="wallet-chip">🪙 <span id="walletVal">0</span></div>
+      <div class="skin-grid" id="skinGrid"></div>
+      <p class="hint">Earn coins by playing runs. Spend them here to unlock car colors.</p>
+      <button class="ghost-btn" id="closeGarageBtn">Close</button>
+    </div>
+
+    <div class="overlay hidden" id="achievementsOverlay">
+      <div class="big-emoji">🏅</div>
+      <h2>Achievements</h2>
+      <ul class="leaderboard-list" id="achievementsList" style="max-width:280px;"></ul>
+      <button class="ghost-btn" id="closeAchievementsBtn">Close</button>
+    </div>
+
     <div class="touch-controls" aria-hidden="true">
       <div class="touch-btn" id="leftBtn">⟵</div>
       <div class="touch-btn" id="rightBtn">⟶</div>
@@ -494,6 +611,8 @@
 <footer>
   Road Dash — a free browser game. No account, no download.
 </footer>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
 <script src="game.js"></script>
 </body>
