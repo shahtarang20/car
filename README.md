@@ -20,28 +20,18 @@ npx serve .
 
 ## Enable Google AdSense
 
-1. Apply for AdSense at https://www.google.com/adsense with your live Vercel URL. Your site needs some real traffic/content history before Google usually approves it — a single-page game may need extra content (about page, privacy policy) to get approved.
-2. Once approved, get your publisher ID (`ca-pub-XXXXXXXXXXXXXXXX`).
-3. In `index.html`, replace `ca-pub-XXXXXXXXXXXXXXXX` in the `<script>` tag in `<head>` with your real ID.
-4. Create ad units in the AdSense dashboard, and replace the `.ad-slot` placeholder `<div>`s with the `<ins class="adsbygoogle">` snippet AdSense gives you, e.g.:
+Your AdSense account (`pub-5841910105267784`) is approved and already wired into this repo:
+- `index.html`'s `<script>` tag in `<head>` loads `ca-pub-5841910105267784`.
+- `ads.txt` at the site root already has the correct line.
 
-```html
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-     data-ad-slot="YOUR_AD_SLOT_ID"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-```
+What's still left to do:
 
-5. Add an `ads.txt` file at the site root once AdSense gives you the exact line, e.g.:
-
-```
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-```
-
-6. AdSense also usually requires a Privacy Policy page — add a simple `privacy.html` linking data usage/cookies if you want faster approval.
+1. **Create display ad units.** In the AdSense dashboard: Ads → By ad unit → Display ads → create one (or more). Copy each unit's `data-ad-slot` value.
+2. **Paste the slot IDs in.** In `index.html`, find the two `.ad-slot` blocks (search `YOUR_AD_SLOT_ID`) and replace them with your real slot IDs.
+3. **Enable Ad break settings** (for the in-game ad breaks in `game.js`): AdSense → Ads → By site → your site (`game-roan-mu.vercel.app`) → turn on "Ad break settings". Without this, `adBreak()` calls just fall through to their fallback and the game still works, but you won't see real ads from those breaks.
+4. **Deploy** — Vercel picks up the change automatically once pushed.
+5. It can take Google a few hours up to ~1 day after enabling ad units/breaks before ads actually start rendering on a fresh site — this is normal.
+6. AdSense also usually wants a visible Privacy Policy — add a simple `privacy.html` linking data/cookie usage if you haven't already, and link it from the footer.
 
 ## Ad breaks (more ad impressions, the compliant way)
 
