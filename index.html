@@ -3,20 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
-<title>Road Dash — Free Car Dodging Game</title>
-<meta name="description" content="Road Dash is a free, fast-paced browser car dodging game. Play instantly on desktop or mobile — no download required.">
+<title>Road Dash — Free Online Car Dodging Game | Play Instantly</title>
+<meta name="description" content="Play Road Dash free in your browser: dodge traffic, collect coins, unlock cars, and beat your best score. No download, no sign-up — works on desktop and mobile.">
+<meta name="keywords" content="road dash, car dodging game, free browser game, online car game, endless runner, dodge traffic game, free online games, no download game">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0b1120">
+<meta name="author" content="Road Dash">
+<link rel="canonical" href="https://car-two-wheat.vercel.app/">
 
 <!-- Open Graph / social preview -->
-<meta property="og:title" content="Road Dash — Free Car Dodging Game">
-<meta property="og:description" content="Dodge traffic and survive as long as you can. Free to play, works on any device.">
+<meta property="og:title" content="Road Dash — Free Online Car Dodging Game">
+<meta property="og:description" content="Dodge traffic, collect coins, and chase your best score. Free to play instantly — no download, no sign-up.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://car-two-wheat.vercel.app/">
+<meta property="og:image" content="https://car-two-wheat.vercel.app/og-image.png">
+<meta property="og:site_name" content="Road Dash">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Road Dash — Free Online Car Dodging Game">
+<meta name="twitter:description" content="Dodge traffic, collect coins, and chase your best score. Free, instant, no download.">
+<meta name="twitter:image" content="https://car-two-wheat.vercel.app/og-image.png">
 
 <!-- PWA-ish niceties for mobile -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='26'%3E%F0%9F%8F%8E%3C/text%3E%3C/svg%3E">
+
+<!-- Structured data: tells Google this is a playable game, not just a page -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Road Dash",
+  "url": "https://car-two-wheat.vercel.app/",
+  "description": "A free, fast-paced browser car dodging game. Dodge traffic, collect coins, unlock cars, and beat your best score.",
+  "genre": ["Arcade", "Endless Runner", "Racing"],
+  "gamePlatform": ["Web Browser", "PC", "Mobile"],
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Road Dash free to play?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Road Dash is completely free, with no purchases required to play or to progress." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to create an account?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Your best score, unlocked skins, and achievements are saved locally in your browser — there's no sign-up or login." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I play Road Dash on my phone?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The game is fully responsive and supports touch controls (swipe or on-screen buttons) on any phone or tablet." }
+    }
+  ]
+}
+</script>
 
 <!-- ==== GOOGLE ADSENSE (pub-5841910105267784) ==== -->
 <!-- Also powers the Ad Placement API (H5 games ad breaks) used in game.js — see README for setup. -->
@@ -474,6 +532,32 @@
   }
   .ad-slot.has-ad { display: flex; }
 
+  .seo-content {
+    width: 100%;
+    max-width: 720px;
+    margin: 8px auto 0;
+    padding: 24px 20px 8px;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+  .seo-content h2 {
+    color: var(--text);
+    font-size: 1.05rem;
+    margin: 24px 0 8px;
+  }
+  .seo-content h2:first-child { margin-top: 0; }
+  .seo-content h3 {
+    color: var(--text);
+    font-size: 0.92rem;
+    margin: 16px 0 4px;
+  }
+  .seo-list {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .seo-list li { margin-bottom: 4px; }
+
   footer {
     padding: 8px 16px 20px;
     font-size: 0.72rem;
@@ -608,6 +692,32 @@
   </div>
 
 </main>
+
+<section class="seo-content">
+  <h2>About Road Dash</h2>
+  <p>Road Dash is a free online car dodging game you can play instantly in your browser — no download, no install, and no account needed. Steer between three lanes, dodge oncoming traffic, and see how far you can get before you crash. It works on desktop and mobile, and your best score is saved automatically on your device.</p>
+
+  <h2>How to play</h2>
+  <p>On desktop, use the ← and → arrow keys (or A and D) to switch lanes. On mobile, swipe left or right on the road, or tap the on-screen arrow buttons. Collect gold coins for bonus points and a growing combo multiplier, and grab the blue shield power-up to smash through one crash for free. The road gets faster the longer you survive, so timing your lane changes matters more the longer your run goes.</p>
+
+  <h2>Features</h2>
+  <ul class="seo-list">
+    <li>Three difficulty levels — Easy, Normal, and Hard</li>
+    <li>Daily play streaks with a starting-shield bonus for returning players</li>
+    <li>Unlockable car color skins, bought with coins earned in-game</li>
+    <li>9 achievements to unlock as you play</li>
+    <li>A local top-5 leaderboard and day/night visual themes</li>
+    <li>Fully responsive — plays the same on phones, tablets, and desktops</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <h3>Is Road Dash free to play?</h3>
+  <p>Yes. Road Dash is completely free, with no purchases required to play or to progress.</p>
+  <h3>Do I need to create an account?</h3>
+  <p>No. Your best score, unlocked skins, and achievements are saved locally in your browser — there's no sign-up or login.</p>
+  <h3>Can I play Road Dash on my phone?</h3>
+  <p>Yes. The game is fully responsive and supports touch controls (swipe or on-screen buttons) on any phone or tablet.</p>
+</section>
 
 <footer>
   Road Dash — a free browser game. No account, no download.

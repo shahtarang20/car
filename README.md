@@ -49,6 +49,21 @@ Important setup notes:
 - **Frequency capping is handled by Google**, not by this code — the API automatically limits how often ad breaks actually serve an ad, so it's safe to call it at every one of these points without manually throttling.
 - If you want fewer ad breaks, just remove the corresponding `requestAd(...)` call in `game.js` (e.g. drop the `pause` one in `togglePause`) and call the continuation function directly instead.
 
+## SEO
+
+The code side is done: title/meta description tuned for search intent, Open Graph + Twitter card tags, `VideoGame` and `FAQPage` structured data (JSON-LD), a canonical URL, `robots.txt`, `sitemap.xml`, `manifest.json`, and a real crawlable text section (About / How to play / Features / FAQ) below the game — a canvas-only game has almost no indexable text otherwise, which is why that section exists.
+
+**There is no code change that guarantees a #1 ranking.** Google also weighs backlinks, domain age/authority, competition for the keywords, and real user engagement (time on page, return visits) — none of which can be set in a file. What's below is everything that actually is in your control:
+
+What's still left to do (all outside the codebase):
+
+1. **Add a real og-image.** `index.html` references `/og-image.png` for social/link previews (1200×630px recommended) — add that file at the repo root, or remove the `og:image`/`twitter:image` tags if you don't have one yet.
+2. **Get a custom domain.** A `*.vercel.app` subdomain shares reputation with every other Vercel project on that domain and looks less trustworthy to both users and Google. Buy a short, keyword-relevant domain (e.g. `roaddashgame.com`) and add it in Vercel → Domains — this alone meaningfully helps.
+3. **Submit to Google Search Console** (https://search.google.com/search-console): verify the domain, then submit `https://yourdomain.com/sitemap.xml` so Google actually crawls it instead of waiting to discover it.
+4. **Update the domain everywhere.** `robots.txt`, `sitemap.xml`, and the canonical/`og:url` tags in `index.html` currently point at `car-two-wheat.vercel.app` — update all of them to your final custom domain once you have one.
+5. **Get backlinks.** Share the game on relevant forums, Reddit (r/WebGames, r/incremental_games, etc.), Product Hunt, itch.io, or game-listing directories. Inbound links from other sites are one of the strongest ranking signals and nothing in the code can substitute for them.
+6. **Keep it fast.** The site is already a lightweight static page (no framework, no build step) — that's good for Core Web Vitals, which Google uses as a ranking factor. Avoid adding heavy dependencies later.
+
 ## Game controls
 
 - Desktop: Arrow keys or A/D to switch lanes.

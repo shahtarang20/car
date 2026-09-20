@@ -1,0 +1,10 @@
+{
+  "name": "Road Dash",
+  "short_name": "Road Dash",
+  "description": "Free online car dodging game — dodge traffic, collect coins, and beat your best score.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060a14",
+  "theme_color": "#0b1120",
+  "icons": []
+}
