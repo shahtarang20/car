@@ -457,21 +457,22 @@
 
   body.touch-device .touch-controls { display: flex; }
 
+  /* Hidden until Google actually fills an ad into it (see the small
+     script by the ad units) — never shows an empty placeholder box. */
   .ad-slot {
+    display: none;
     flex: 1 1 250px;
     min-width: 250px;
     max-width: 300px;
     min-height: 250px;
-    display: flex;
     align-items: center;
     justify-content: center;
     background: var(--panel);
-    border: 1px dashed var(--panel-border);
     border-radius: 14px;
-    font-size: 0.72rem;
-    color: var(--text-dim);
     align-self: center;
+    overflow: hidden;
   }
+  .ad-slot.has-ad { display: flex; }
 
   footer {
     padding: 8px 16px 20px;
@@ -495,7 +496,7 @@
 
 <main class="layout">
 
-  <div class="ad-slot" aria-label="advertisement">
+  <div class="ad-slot" aria-label="advertisement" id="adSlot1">
     <!-- TODO: create an ad unit in AdSense → Ads → By ad unit → Display ads,
          then paste its data-ad-slot value below (client ID is already set). -->
     <ins class="adsbygoogle"
@@ -595,7 +596,7 @@
     </div>
   </div>
 
-  <div class="ad-slot" aria-label="advertisement">
+  <div class="ad-slot" aria-label="advertisement" id="adSlot2">
     <!-- TODO: paste a second (different) ad-slot ID here, same as the block above. -->
     <ins class="adsbygoogle"
          style="display:block; width:100%; height:100%;"
@@ -613,6 +614,23 @@
 </footer>
 
 <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script>
+  // Ad slots stay hidden (see .ad-slot CSS) until Google's script marks the
+  // <ins> inside as actually filled — this stops an empty placeholder box
+  // from ever showing when an ad unit has no fill (or isn't set up yet).
+  (function () {
+    document.querySelectorAll('.ad-slot').forEach((slot) => {
+      const ins = slot.querySelector('ins.adsbygoogle');
+      if (!ins) return;
+      const sync = () => {
+        slot.classList.toggle('has-ad', ins.getAttribute('data-ad-status') === 'filled');
+      };
+      new MutationObserver(sync).observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
+      sync();
+    });
+  })();
+</script>
 
 <script src="game.js"></script>
 </body>
