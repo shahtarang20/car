@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Road Dash — Free Online Car Dodging Game | Play Instantly</title>
 <meta name="description" content="Play Road Dash free in your browser: dodge traffic, collect coins, unlock cars, and beat your best score. No download, no sign-up — works on desktop and mobile.">
 <meta name="keywords" content="road dash, car dodging game, free browser game, online car game, endless runner, dodge traffic game, free online games, no download game">
@@ -11,12 +11,17 @@
 <meta name="author" content="Road Dash">
 <link rel="canonical" href="https://car-two-wheat.vercel.app/">
 
-<!-- Open Graph / social preview -->
+<!-- Open Graph / social preview: this is the card WhatsApp, Facebook, Telegram, X
+     and Instagram DMs render when a Road Dash link (or shared score) is posted. -->
 <meta property="og:title" content="Road Dash — Free Online Car Dodging Game">
 <meta property="og:description" content="Dodge traffic, collect coins, and chase your best score. Free to play instantly — no download, no sign-up.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://car-two-wheat.vercel.app/">
 <meta property="og:image" content="https://car-two-wheat.vercel.app/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Road Dash — a green sports car dodging traffic on a three-lane road">
 <meta property="og:site_name" content="Road Dash">
 <meta property="og:locale" content="en_US">
 
@@ -25,13 +30,17 @@
 <meta name="twitter:title" content="Road Dash — Free Online Car Dodging Game">
 <meta name="twitter:description" content="Dodge traffic, collect coins, and chase your best score. Free, instant, no download.">
 <meta name="twitter:image" content="https://car-two-wheat.vercel.app/og-image.png">
+<meta name="twitter:image:alt" content="Road Dash — a green sports car dodging traffic on a three-lane road">
 
-<!-- PWA-ish niceties for mobile -->
+<!-- Installable app (PWA) -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Road Dash">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='26'%3E%F0%9F%8F%8E%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
 <!-- Structured data: tells Google this is a playable game, not just a page -->
 <script type="application/ld+json">
@@ -40,11 +49,13 @@
   "@type": "VideoGame",
   "name": "Road Dash",
   "url": "https://car-two-wheat.vercel.app/",
+  "image": "https://car-two-wheat.vercel.app/og-image.png",
   "description": "A free, fast-paced browser car dodging game. Dodge traffic, collect coins, unlock cars, and beat your best score.",
   "genre": ["Arcade", "Endless Runner", "Racing"],
   "gamePlatform": ["Web Browser", "PC", "Mobile"],
   "applicationCategory": "Game",
   "operatingSystem": "Any",
+  "isAccessibleForFree": true,
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -70,18 +81,30 @@
     {
       "@type": "Question",
       "name": "Can I play Road Dash on my phone?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The game is fully responsive and supports touch controls (swipe or on-screen buttons) on any phone or tablet." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The game is fully responsive and supports touch controls (swipe, tap the sides of the road, or use the on-screen buttons) on any phone or tablet." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I install Road Dash as an app?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Tap the Install app button to add Road Dash to your home screen or desktop. It launches full screen and keeps working offline." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I share my score with friends?",
+      "acceptedAnswer": { "@type": "Answer", "text": "After a run, tap Share to send a ready-made score card to WhatsApp, Instagram, Facebook and more — your friends get a link to challenge your score." }
     }
   ]
 }
 </script>
 
 <!-- ==== GOOGLE ADSENSE (pub-5841910105267784) ==== -->
-<!-- Also powers the Ad Placement API (H5 games ad breaks) used in game.js — see README for setup. -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5841910105267784" crossorigin="anonymous"></script>
+<!-- Also powers the Ad Placement API (H5 games ad breaks) used in game.js — see README for setup.
+     onerror: if an ad blocker stops this script, game.js skips ad breaks instantly instead of waiting. -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5841910105267784" data-ad-frequency-hint="30s" crossorigin="anonymous" onerror="window.__adsBlocked = true"></script>
 <script>
   window.adsbygoogle = window.adsbygoogle || [];
-  window.adBreak = window.adBreak || function (o) { window.adsbygoogle.push(o); };
+  window.adBreak = window.adConfig = function (o) { window.adsbygoogle.push(o); };
+  window.adConfig({ preloadAdBreaks: 'on', sound: 'on', onReady: function () { window.__adReady = true; } });
 </script>
 
 <style>
@@ -94,8 +117,13 @@
     --accent: #22e08a;
     --accent-dark: #0c3d28;
     --danger: #ff5470;
+    --gold: #ffd166;
     --text: #eef2fb;
     --text-dim: #7d8bab;
+    --overlay-bg: rgba(6, 9, 18, 0.78);
+    --chip-bg: rgba(255,255,255,0.06);
+    --chip-border: rgba(255,255,255,0.12);
+    --chrome-h: 128px;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
@@ -103,15 +131,22 @@
   }
 
   body[data-theme="day"] {
+    color-scheme: light;
     --bg-0: #cfe8ff;
     --bg-1: #eaf6ff;
     --panel: #ffffff;
     --panel-border: #cbd9ee;
     --text: #14213d;
-    --text-dim: #5b6b8c;
+    --text-dim: #4d5d7d;
+    --accent: #067a47;
+    --gold-text: #8a5a00;
+    --overlay-bg: rgba(228, 241, 255, 0.84);
+    --chip-bg: rgba(20,33,61,0.06);
+    --chip-border: rgba(20,33,61,0.16);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
 
   html, body {
     margin: 0;
@@ -132,10 +167,28 @@
     padding-left: var(--safe-left);
     padding-right: var(--safe-right);
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+
+  button { font-family: inherit; touch-action: manipulation; }
+  button:focus-visible, a:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   header {
-    padding: 18px 16px 6px;
+    padding: 14px 16px 4px;
     text-align: center;
   }
   header h1 {
@@ -143,7 +196,7 @@
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff, #9db4ff);
+    background: linear-gradient(135deg, var(--text), #9db4ff);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -153,6 +206,25 @@
     font-size: 0.82rem;
     color: var(--text-dim);
   }
+
+  .install-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    min-height: 36px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--chip-border);
+    background: var(--chip-bg);
+    color: var(--text);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, background 0.15s ease;
+  }
+  .install-pill:hover { background: rgba(34,224,138,0.14); }
+  .install-pill:active { transform: scale(0.96); }
 
   .layout {
     display: flex;
@@ -166,10 +238,13 @@
     flex: 1;
   }
 
+  /* The game never overflows the viewport: width is capped so the 3:5 board
+     always fits under the header, on any screen height. */
   .game-wrap {
     position: relative;
     flex: 0 0 auto;
-    width: min(420px, 96vw);
+    width: max(150px, min(420px, 96vw, calc((100vh - var(--chrome-h)) * 0.6)));
+    width: max(150px, min(420px, 96vw, calc((100dvh - var(--chrome-h)) * 0.6)));
     aspect-ratio: 3 / 5;
     border-radius: 20px;
     padding: 3px;
@@ -187,191 +262,346 @@
     touch-action: none;
   }
 
+  /* ---- HUD (top-left stack) and controls (top-right) ---- */
   .hud {
     position: absolute;
-    top: 14px; left: 14px; right: 14px;
+    top: 14px; left: 14px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     pointer-events: none;
     z-index: 3;
+    transition: opacity 0.2s ease;
+    max-width: calc(100% - 178px);
   }
-  .hud .chip {
-    background: rgba(6, 10, 20, 0.55);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
-  }
-  .hud .chip.score { color: var(--accent); }
-  .hud .chip.best { color: var(--text-dim); }
-  .hud .chip.combo {
-    color: #ffd166;
-    display: none;
-  }
-  .hud .chip.combo.show { display: inline-block; }
+  .hud .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .game-wrap[data-state="menu"] .hud,
+  .game-wrap[data-state="over"] .hud { opacity: 0; }
 
-  .pause-btn {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    z-index: 4;
+  .hud .chip {
+    background: rgba(6, 10, 20, 0.6);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    color: #eef2fb;
+    font-variant-numeric: tabular-nums;
+  }
+  .hud .chip.score { color: #22e08a; font-size: 1.15rem; padding: 4px 14px; }
+  .hud .chip.best { color: #aab6d3; font-size: 0.7rem; padding: 3px 10px; }
+  .hud .chip.combo { color: #ffd166; display: none; }
+  .hud .chip.combo.show { display: inline-block; }
+  .hud .chip.combo.pop { animation: chip-pop 0.28s ease; }
+  .hud .chip.shield {
     display: none;
+    align-items: center;
+    gap: 7px;
+    color: #8cc4ff;
+  }
+  .hud .chip.shield.show { display: inline-flex; }
+  .shield-bar {
+    width: 52px; height: 6px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.16);
+    overflow: hidden;
+  }
+  .shield-bar i {
+    display: block;
+    height: 100%;
+    width: calc(var(--p, 1) * 100%);
+    background: linear-gradient(90deg, #4fa8ff, #8cc4ff);
+  }
+  @keyframes chip-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.18); }
+    100% { transform: scale(1); }
   }
 
   .top-controls {
     position: absolute;
-    top: 14px;
-    left: 0; right: 0;
+    top: 12px; right: 12px;
     display: flex;
-    justify-content: space-between;
-    padding: 0 14px;
-    z-index: 4;
-    pointer-events: none;
+    gap: 8px;
+    z-index: 7;
   }
   .icon-btn {
-    pointer-events: auto;
-    background: rgba(6, 10, 20, 0.55);
+    background: rgba(6, 10, 20, 0.6);
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #eef2fb;
     border-radius: 999px;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.1rem;
     cursor: pointer;
+    padding: 0;
+    transition: transform 0.1s ease, background 0.15s ease;
   }
-  .icon-btn:active { transform: scale(0.92); }
+  .icon-btn:hover { background: rgba(255,255,255,0.14); }
+  .icon-btn:active { transform: scale(0.9); }
+  #pauseBtn { display: none; }
+  .game-wrap[data-state="playing"] #pauseBtn,
+  .game-wrap[data-state="countdown"] #pauseBtn { display: flex; }
 
+  /* ---- Overlays (menu, pause, game over, panels) ---- */
   .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(6, 9, 18, 0.92);
-    backdrop-filter: blur(3px);
+    background: var(--overlay-bg);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 14px;
+    gap: 10px;
     text-align: center;
     border-radius: 18px;
-    padding: 24px;
+    padding: 56px 18px 18px;
     z-index: 5;
-    transition: opacity 0.2s ease;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    animation: overlay-in 0.22s ease both;
   }
+  /* Flexible spacers = vertically centred when the content fits, scrollable
+     (never clipped) when it doesn't. */
+  .overlay::before, .overlay::after { content: ''; flex: 1 1 0; min-height: 0; }
   .overlay.hidden { display: none; }
+  @keyframes overlay-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
   .overlay h2 {
     margin: 0;
     font-size: 1.6rem;
     font-weight: 800;
+    letter-spacing: -0.01em;
   }
-  .overlay .big-emoji { font-size: 2.6rem; line-height: 1; }
-  .overlay button {
-    padding: 13px 30px;
-    font-size: 1rem;
-    font-weight: 700;
+  .overlay .big-emoji { font-size: 2.4rem; line-height: 1; }
+  .overlay .hint { margin: 0; font-size: 0.74rem; color: var(--text-dim); max-width: 290px; line-height: 1.5; }
+  .overlay .tagline { margin: -4px 0 0; font-size: 0.85rem; color: var(--text-dim); }
+
+  .brand-icon {
+    width: 76px; height: 76px;
+    border-radius: 20px;
+    box-shadow: 0 14px 30px -10px rgba(34,224,138,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+    animation: float 3.2s ease-in-out infinite;
+  }
+  .overlay .brand-title {
+    background: linear-gradient(135deg, var(--text), #9db4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .primary-btn {
+    min-height: 50px;
+    padding: 13px 38px;
+    font-size: 1.05rem;
+    font-weight: 800;
     border: none;
     border-radius: 999px;
     background: linear-gradient(135deg, #2af0a0, #22c55e);
     color: #05210f;
     cursor: pointer;
-    box-shadow: 0 8px 20px -6px rgba(34, 197, 94, 0.55);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    box-shadow: 0 10px 24px -8px rgba(34, 197, 94, 0.6);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s ease;
   }
-  .overlay button:hover { transform: translateY(-1px); }
-  .overlay button:active { transform: scale(0.96); }
-  .overlay .hint { font-size: 0.78rem; color: var(--text-dim); max-width: 280px; line-height: 1.5; }
-  .overlay .stat-row {
-    display: flex;
-    gap: 22px;
-    font-size: 0.95rem;
-  }
-  .overlay .stat-row .stat b {
-    display: block;
-    font-size: 1.4rem;
-    color: var(--accent);
-  }
-  .overlay .stat-row .stat.crash b { color: var(--danger); }
-  .new-best-badge {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #ffd166;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+  .primary-btn:hover { transform: translateY(-1px); }
+  .primary-btn:active { transform: scale(0.96); }
+  .primary-btn:disabled { opacity: 0.7; pointer-events: none; }
+  .primary-btn.pulse { animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 10px 24px -8px rgba(34, 197, 94, 0.6), 0 0 0 0 rgba(34,224,138,0.45); }
+    50% { box-shadow: 0 10px 24px -8px rgba(34, 197, 94, 0.6), 0 0 0 12px rgba(34,224,138,0); }
   }
 
   .ghost-btn {
+    min-height: 44px;
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.18);
+    border: 1px solid var(--chip-border);
     color: var(--text-dim);
     padding: 9px 20px;
     border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .ghost-btn:active { transform: scale(0.96); }
-  .revive-btn {
-    border-color: #ffd166;
-    color: #ffd166;
+    font-size: 0.85rem;
     font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.15s ease, color 0.15s ease;
   }
-  .revive-btn:disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
+  .ghost-btn:hover { background: var(--chip-bg); color: var(--text); }
+  .ghost-btn:active { transform: scale(0.96); }
+  .ghost-btn:disabled { opacity: 0.5; pointer-events: none; }
+
+  .revive-btn { border-color: var(--gold); color: var(--gold); margin-bottom: 10px; }
+  .revive-btn:hover { background: rgba(255,209,102,0.12); color: var(--gold); }
   .revive-btn.hidden { display: none; }
 
-  .difficulty-row {
-    display: flex;
-    gap: 8px;
-  }
-  .diff-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: var(--text-dim);
-    padding: 7px 14px;
+  .share-btn {
+    min-height: 50px;
+    padding: 13px 22px;
+    font-size: 0.95rem;
+    font-weight: 800;
     border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 700;
+    border: 1.5px solid var(--accent);
+    background: rgba(34,224,138,0.12);
+    color: var(--accent);
     cursor: pointer;
+    transition: transform 0.12s ease, background 0.15s ease;
+  }
+  .share-btn:hover { background: rgba(34,224,138,0.2); }
+  .share-btn:active { transform: scale(0.96); }
+
+  .btn-row { display: flex; gap: 10px; width: 100%; max-width: 330px; justify-content: center; }
+  .btn-row .primary-btn { flex: 1.35 1 0; padding-left: 12px; padding-right: 12px; font-size: 0.98rem; white-space: nowrap; }
+  .btn-row .share-btn { flex: 1 1 0; padding-left: 12px; padding-right: 12px; white-space: nowrap; }
+
+  .difficulty-row { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: var(--chip-bg); border: 1px solid var(--chip-border); }
+  .diff-btn {
+    min-height: 40px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   .diff-btn.active {
     background: linear-gradient(135deg, #2af0a0, #22c55e);
     color: #05210f;
-    border-color: transparent;
   }
 
-  .theme-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    font-size: 0.78rem;
+  body[data-theme="day"] .revive-btn { color: #8a5a00; border-color: #b07a10; }
+  body[data-theme="day"] .revive-btn:hover { background: rgba(176,122,16,0.12); color: #8a5a00; }
+  body[data-theme="day"] .wallet-chip, body[data-theme="day"] .skin-cost { color: #8a5a00; }
+  body[data-theme="day"] .chip-stat b, body[data-theme="day"] .stat-row .stat b { color: #067a47; }
+  .stat-chips { display: flex; gap: 8px; }
+  .chip-stat {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 0.82rem;
     color: var(--text-dim);
   }
-  .theme-row button {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text);
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    cursor: pointer;
-  }
+  .chip-stat b { color: var(--text); font-variant-numeric: tabular-nums; }
 
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 330px;
+  }
+  .tile-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    min-height: 58px;
+    padding: 8px 2px;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: 14px;
+    color: var(--text-dim);
+    font-size: 0.64rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .tile-btn span { font-size: 1.25rem; line-height: 1; }
+  .tile-btn:hover { background: rgba(34,224,138,0.12); color: var(--text); }
+  .tile-btn:active { transform: scale(0.94); }
+
+  .hint-touch { display: none; }
+  body.touch-device .hint-touch { display: block; }
+  body.touch-device .hint-desktop { display: none; }
+
+  /* ---- Game over ---- */
+  .gameover-heading { display: flex; align-items: center; gap: 8px; }
+  .new-best-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #1d1400;
+    background: linear-gradient(135deg, #ffe08a, #ffb020);
+    border-radius: 999px;
+    padding: 4px 14px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    animation: chip-pop 0.5s ease 0.2s both;
+  }
+  .new-best-badge.hidden { display: none; }
+  .final-score { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+  .final-score .label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.18em; color: var(--text-dim); margin-bottom: 4px; }
+  .final-score b {
+    font-size: 3.4rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    background: linear-gradient(180deg, var(--text), var(--danger));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay.new-best .final-score b { background: linear-gradient(180deg, #fff3b0, #ffb020); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat-row { display: flex; gap: 8px; width: 100%; max-width: 330px; }
+  .stat-row .stat {
+    flex: 1;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: 12px;
+    padding: 8px 4px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .stat-row .stat b {
+    display: block;
+    font-size: 1.15rem;
+    color: var(--accent);
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .note, .challenge-line, .streak-line {
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    max-width: 100%;
+  }
+  .note { background: var(--chip-bg); border: 1px solid var(--chip-border); color: var(--text); }
+  .challenge-line { background: rgba(255, 84, 112, 0.12); border: 1px solid rgba(255, 84, 112, 0.4); color: var(--text); }
+  .streak-line { background: rgba(255, 209, 102, 0.12); border: 1px solid rgba(255, 209, 102, 0.4); color: var(--gold); }
+  body[data-theme="day"] .streak-line { color: #9a6a00; }
+  .note.hidden, .challenge-line.hidden, .streak-line.hidden { display: none; }
+
+  /* ---- Panels: leaderboard / garage / achievements ---- */
   .leaderboard-list {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     list-style: none;
     padding: 0;
     margin: 0;
     width: 100%;
-    max-width: 220px;
-    font-size: 0.85rem;
+    max-width: 280px;
+    font-size: 0.9rem;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -379,75 +609,77 @@
   .leaderboard-list li {
     display: flex;
     justify-content: space-between;
-    background: rgba(255,255,255,0.04);
-    padding: 6px 12px;
-    border-radius: 8px;
+    align-items: center;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    padding: 8px 14px;
+    border-radius: 12px;
   }
-  .leaderboard-list li .rank { color: var(--text-dim); font-weight: 700; width: 20px; }
-  .leaderboard-list li b { color: var(--accent); }
+  .leaderboard-list li .rank { color: var(--text-dim); font-weight: 800; min-width: 28px; text-align: left; }
+  .leaderboard-list li b { color: var(--accent); font-variant-numeric: tabular-nums; }
   .leaderboard-list .empty { justify-content: center; color: var(--text-dim); }
 
-  .menu-btn-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .streak-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 209, 102, 0.12);
-    border: 1px solid rgba(255, 209, 102, 0.35);
-    border-radius: 999px;
-    padding: 6px 16px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #ffd166;
-  }
-  .streak-line.hidden { display: none; }
+  .achv-row { gap: 10px; text-align: left; }
+  .achv-row { opacity: 0.5; }
+  .achv-row.unlocked { opacity: 1; }
+  .achv-main { display: flex; align-items: center; gap: 10px; }
+  .achv-icon { font-size: 1.3rem; }
+  .achv-row b { color: var(--text) !important; display: block; font-size: 0.85rem; }
+  .achv-row small { color: var(--text-dim); font-size: 0.68rem; }
+  .panel-sub { font-size: 0.78rem; color: var(--text-dim); margin: -4px 0 0; }
 
   .wallet-chip {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     background: rgba(255, 176, 32, 0.12);
-    border: 1px solid rgba(255, 176, 32, 0.35);
+    border: 1px solid rgba(255, 176, 32, 0.4);
     border-radius: 999px;
     padding: 6px 16px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #ffb020;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #e09a10;
+    font-variant-numeric: tabular-nums;
   }
 
   .skin-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
     width: 100%;
-    max-width: 320px;
+    max-width: 330px;
   }
   .skin-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 8px 6px;
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    border-radius: 14px;
+    padding: 8px 4px;
     text-align: center;
-    font-size: 0.68rem;
     color: var(--text-dim);
     cursor: pointer;
+    font-size: 0.68rem;
+    transition: transform 0.1s ease, border-color 0.15s ease;
   }
+  .skin-card:active { transform: scale(0.95); }
   .skin-card.selected { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 1px var(--accent) inset; }
-  .skin-card.locked { opacity: 0.55; }
+  .skin-card.locked .skin-swatch canvas { filter: grayscale(0.7) brightness(0.8); }
+  .skin-card.nope { animation: nope 0.35s ease; }
   .skin-swatch {
-    width: 100%;
-    height: 34px;
-    border-radius: 8px;
-    margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: center;
+    height: 70px;
+    border-radius: 10px;
+    margin-bottom: 4px;
   }
-  .skin-cost { color: #ffb020; font-weight: 700; }
+  .skin-name { font-weight: 800; color: var(--text); }
+  .skin-sub { margin-top: 1px; }
+  .skin-cost { color: #e09a10; font-weight: 800; }
+  @keyframes nope {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
 
+  /* ---- Toasts ---- */
   .toast-stack {
     position: fixed;
     top: calc(12px + var(--safe-top));
@@ -457,24 +689,26 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    z-index: 50;
+    z-index: 60;
     pointer-events: none;
   }
   .achv-toast {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(16, 22, 40, 0.95);
-    border: 1px solid rgba(255, 209, 102, 0.4);
-    border-radius: 12px;
+    max-width: calc(100vw - 24px);
+    background: rgba(16, 22, 40, 0.96);
+    color: #eef2fb;
+    border: 1px solid rgba(255, 209, 102, 0.45);
+    border-radius: 14px;
     padding: 10px 16px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6);
     animation: toast-in 0.25s ease, toast-out 0.3s ease 2.7s forwards;
   }
-  .achv-toast .icon { font-size: 1.3rem; }
+  .achv-toast .icon { font-size: 1.4rem; }
   .achv-toast b { color: #ffd166; display: block; }
-  .achv-toast span.desc { color: var(--text-dim); font-size: 0.72rem; }
+  .achv-toast span.desc { color: #9aa8c6; font-size: 0.72rem; }
   @keyframes toast-in {
     from { opacity: 0; transform: translateY(-12px); }
     to { opacity: 1; transform: translateY(0); }
@@ -483,42 +717,45 @@
     to { opacity: 0; transform: translateY(-12px); }
   }
 
-  /* Touch control pad, shown only on touch devices */
+  /* ---- Touch steering pad (touch devices, only while driving) ---- */
   .touch-controls {
     position: absolute;
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
+    bottom: 14px;
+    left: 14px;
+    right: 14px;
     display: none;
     justify-content: space-between;
     z-index: 4;
     gap: 12px;
+    pointer-events: none;
   }
   .touch-btn {
+    pointer-events: auto;
     flex: 1;
-    max-width: 120px;
-    height: 58px;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    max-width: 130px;
+    height: 60px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    color: var(--text);
+    font-size: 1.6rem;
+    color: #eef2fb;
     -webkit-user-select: none;
+    user-select: none;
   }
   .touch-btn:active {
-    background: rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.2);
     transform: scale(0.96);
   }
+  body.touch-device .game-wrap[data-state="playing"] .touch-controls,
+  body.touch-device .game-wrap[data-state="countdown"] .touch-controls { display: flex; }
 
-  body.touch-device .touch-controls { display: flex; }
-
-  /* Hidden until Google actually fills an ad into it (see the small
-     script by the ad units) — never shows an empty placeholder box. */
+  /* Never shows an empty placeholder box: invisible until Google actually
+     fills an ad into it (see the small script by the ad units). */
   .ad-slot {
-    display: none;
+    display: flex;
     flex: 1 1 250px;
     min-width: 250px;
     max-width: 300px;
@@ -530,7 +767,18 @@
     align-self: center;
     overflow: hidden;
   }
-  .ad-slot.has-ad { display: flex; }
+  /* Not display:none — Google can't size an ad inside a hidden box ("No slot
+     size for availableWidth=0"), so an unfilled slot is parked off-screen at a
+     real width instead and slides into the layout once it fills. */
+  .ad-slot:not(.has-ad) {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 300px;
+    height: 250px;
+    visibility: hidden;
+    pointer-events: none;
+  }
 
   .seo-content {
     width: 100%;
@@ -540,6 +788,8 @@
     color: var(--text-dim);
     font-size: 0.88rem;
     line-height: 1.65;
+    user-select: text;
+    -webkit-user-select: text;
   }
   .seo-content h2 {
     color: var(--text);
@@ -559,15 +809,94 @@
   .seo-list li { margin-bottom: 4px; }
 
   footer {
-    padding: 8px 16px 20px;
-    font-size: 0.72rem;
+    padding: 8px 16px 24px;
+    font-size: 0.74rem;
     color: var(--text-dim);
     text-align: center;
+    line-height: 1.8;
   }
   footer a { color: var(--text-dim); }
 
+  /* When the two ad columns can't sit beside the board, put the board first so
+     a late ad fill pushes only content below it (no layout shift under the
+     player's thumbs). */
+  @media (max-width: 1040px) {
+    .game-wrap { order: 1; }
+    .ad-slot { order: 2; }
+  }
   @media (max-width: 720px) {
     .ad-slot { max-width: 92vw; min-height: 100px; }
+    /* Phones: header shrinks to just the title so the board gets the height;
+       the Install button lives on the start screen instead. */
+    :root { --chrome-h: 96px; }
+    header { padding-top: 10px; }
+    header p, header .install-pill { display: none; }
+  }
+
+  /* Short boards (small phones): tighten overlay spacing instead of scrolling. */
+  .game-wrap { container-type: size; container-name: board; }
+  @container board (max-height: 600px) {
+    .overlay { padding-top: 50px; gap: 7px; }
+    .brand-icon { width: 56px; height: 56px; border-radius: 15px; }
+    .overlay .brand-title { font-size: 1.7rem; }
+    .overlay .tagline { display: none; }
+    .primary-btn { min-height: 46px; padding-top: 10px; padding-bottom: 10px; }
+    .tile-btn { min-height: 50px; }
+    .final-score b { font-size: 2.8rem; }
+    .overlay .big-emoji { font-size: 1.9rem; }
+  }
+  @container board (max-width: 270px) {
+    .overlay { padding-left: 10px; padding-right: 10px; }
+    .diff-btn { padding: 6px 10px; font-size: 0.72rem; }
+    .menu-grid { grid-template-columns: repeat(2, 1fr); }
+    .btn-row { flex-direction: column; }
+    .btn-row .primary-btn, .btn-row .share-btn { flex: 0 0 auto; width: 100%; }
+    .revive-btn { white-space: normal; padding: 8px 14px; font-size: 0.78rem; }
+    .stat-row .stat b { font-size: 1rem; }
+    .overlay h2 { font-size: 1.35rem; }
+  }
+  @container board (max-height: 400px) {
+    .overlay { padding-top: 42px; gap: 4px; }
+    .brand-icon, .streak-line, .overlay .big-emoji, .panel-sub { display: none; }
+    .overlay h2, .overlay .brand-title { font-size: 1.3rem; }
+    .menu-grid { grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .tile-btn { min-height: 44px; padding: 4px 0; font-size: 0.58rem; }
+    .tile-btn span { font-size: 1rem; }
+    .primary-btn { min-height: 42px; padding: 8px 22px; font-size: 0.95rem; }
+    .final-score b { font-size: 2.2rem; }
+    .final-score .label { display: none; }
+    .stat-row .stat { padding: 4px 2px; }
+    .note { display: none; }
+    .skin-swatch { height: 56px; }
+    .btn-row { flex-direction: row; }
+    .btn-row .primary-btn, .btn-row .share-btn { flex: 1 1 0; width: auto; }
+  }
+  @container board (max-height: 500px) {
+    .overlay .hint { display: none; }
+    .overlay { padding-top: 46px; gap: 5px; }
+    .stat-chips { display: none; }
+  }
+
+  /* Phones held sideways: drop the header so the board gets the full height. */
+  @media (max-height: 520px) {
+    :root { --chrome-h: 24px; }
+    header { display: none; }
+    .game-wrap { aspect-ratio: 4 / 5; width: max(150px, calc((100vh - var(--chrome-h)) * 0.8)); width: max(150px, calc((100dvh - var(--chrome-h)) * 0.8)); }
+    .layout { padding-top: 6px; padding-bottom: 6px; }
+    .overlay { padding-top: 48px; gap: 6px; }
+    .brand-icon { width: 52px; height: 52px; border-radius: 14px; }
+    .final-score b { font-size: 2.6rem; }
+  }
+  @media (max-width: 299px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 </style>
 </head>
@@ -575,8 +904,13 @@
 
 <header>
   <h1>🚗 Road Dash</h1>
-  <p>Dodge traffic, grab coins, chase your best run — free, instant, no install.</p>
+  <p>Dodge traffic, grab coins, chase your best run — free &amp; instant.</p>
+  <button class="install-pill" type="button" data-install-btn hidden>📲 Install app</button>
 </header>
+
+<noscript>
+  <p style="max-width:420px;text-align:center;color:#ff8a9d;padding:0 16px">Road Dash needs JavaScript to run. Please enable it in your browser.</p>
+</noscript>
 
 <main class="layout">
 
@@ -586,98 +920,116 @@
     <ins class="adsbygoogle"
          style="display:block; width:100%; height:100%;"
          data-ad-client="ca-pub-5841910105267784"
-         data-ad-slot="YOUR_AD_SLOT_ID"
+         data-ad-slot="3035911114"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <script>(function(){var i=document.currentScript.previousElementSibling;if(i&&!/^YOUR_/.test(i.getAttribute('data-ad-slot')||''))(window.adsbygoogle=window.adsbygoogle||[]).push({});})();</script>
   </div>
 
-  <div class="game-wrap">
+  <div class="game-wrap" data-state="menu">
     <canvas id="gameCanvas" aria-label="Road Dash game canvas" role="img"></canvas>
 
-    <div class="top-controls">
-      <button class="icon-btn" id="pauseBtn" aria-label="Pause">⏸</button>
-      <div style="display:flex; gap:8px; pointer-events:auto;">
-        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
-        <button class="icon-btn" id="soundBtn" aria-label="Toggle sound">🔊</button>
+    <div class="hud" aria-hidden="true">
+      <div class="row">
+        <span class="chip score" id="scoreDisplay">0</span>
+        <span class="chip combo" id="comboDisplay">x2 COMBO</span>
       </div>
-    </div>
-
-    <div class="hud">
-      <span class="chip score" id="scoreDisplay">0</span>
-      <span class="chip combo" id="comboDisplay">x2 COMBO</span>
       <span class="chip best" id="bestDisplay">BEST 0</span>
+      <span class="chip shield" id="shieldDisplay">🛡 <span class="shield-bar"><i></i></span></span>
     </div>
 
-    <div class="overlay" id="startOverlay">
-      <div class="big-emoji">🏁</div>
-      <h2>Road Dash</h2>
+    <div class="overlay" id="startOverlay" role="dialog" aria-labelledby="startTitle">
+      <img class="brand-icon" src="icons/icon-192.png" width="76" height="76" alt="">
+      <h2 class="brand-title" id="startTitle">Road Dash</h2>
+      <p class="tagline">Dodge traffic. Grab coins. Beat your best.</p>
+      <div class="challenge-line hidden" id="challengeLine"></div>
       <div class="streak-line hidden" id="streakLine">🔥 Day 1 streak</div>
-      <p class="hint">Dodge traffic, collect gold coins, grab the shield power-up. Speed ramps the longer you survive.</p>
-
-      <div class="difficulty-row" id="difficultyRow">
-        <button class="diff-btn" data-diff="easy">Easy</button>
-        <button class="diff-btn active" data-diff="normal">Normal</button>
-        <button class="diff-btn" data-diff="hard">Hard</button>
+      <div class="stat-chips">
+        <span class="chip-stat" title="Best score">🏆 <b id="menuBest">0</b></span>
+        <span class="chip-stat" title="Coins in your wallet">🪙 <b id="menuWallet">0</b></span>
       </div>
 
-      <button id="startBtn">Start Game</button>
-      <p class="hint">Desktop: ← → or A / D. Mobile: swipe or tap the arrows. P to pause.</p>
-      <div class="menu-btn-row">
-        <button class="ghost-btn" id="showLeaderboardBtn">🏆 Leaderboard</button>
-        <button class="ghost-btn" id="showGarageBtn">🚘 Garage</button>
-        <button class="ghost-btn" id="showAchievementsBtn">🏅 Achievements</button>
+      <div class="difficulty-row" id="difficultyRow" role="radiogroup" aria-label="Difficulty">
+        <button class="diff-btn" type="button" role="radio" aria-checked="false" data-diff="easy">Easy</button>
+        <button class="diff-btn active" type="button" role="radio" aria-checked="true" data-diff="normal">Normal</button>
+        <button class="diff-btn" type="button" role="radio" aria-checked="false" data-diff="hard">Hard</button>
       </div>
+
+      <button class="primary-btn pulse" id="startBtn" type="button" data-autofocus>▶ Play</button>
+
+      <div class="menu-grid">
+        <button class="tile-btn" id="showLeaderboardBtn" type="button"><span aria-hidden="true">🏆</span>Scores</button>
+        <button class="tile-btn" id="showGarageBtn" type="button"><span aria-hidden="true">🚘</span>Garage</button>
+        <button class="tile-btn" id="showAchievementsBtn" type="button"><span aria-hidden="true">🏅</span>Awards</button>
+        <button class="tile-btn" id="inviteBtn" type="button"><span aria-hidden="true">📤</span>Invite</button>
+      </div>
+      <button class="ghost-btn install-pill" type="button" data-install-btn hidden>📲 Install app</button>
+      <p class="hint hint-desktop">← → or A / D to steer · P to pause · M to mute</p>
+      <p class="hint hint-touch">Swipe or tap the sides of the road to steer</p>
     </div>
 
-    <div class="overlay hidden" id="pauseOverlay">
-      <div class="big-emoji">⏸</div>
-      <h2>Paused</h2>
-      <button id="resumeBtn">Resume</button>
-      <button class="ghost-btn" id="quitBtn">Quit to menu</button>
+    <div class="overlay hidden" id="pauseOverlay" role="dialog" aria-labelledby="pauseTitle">
+      <div class="big-emoji" aria-hidden="true">⏸</div>
+      <h2 id="pauseTitle">Paused</h2>
+      <button class="primary-btn" id="resumeBtn" type="button" data-autofocus>▶ Resume</button>
+      <button class="ghost-btn" id="quitBtn" type="button">Quit to menu</button>
+      <p class="hint">You'll get a 3-2-1 countdown before the road moves again.</p>
     </div>
 
-    <div class="overlay hidden" id="gameOverOverlay">
-      <div class="big-emoji">💥</div>
-      <h2>Crashed!</h2>
-      <div class="new-best-badge hidden" id="newBestBadge">New Best!</div>
+    <div class="overlay hidden" id="gameOverOverlay" role="dialog" aria-labelledby="gameOverHeading">
+      <h2 class="gameover-heading" id="gameOverHeading"><span id="gameOverEmoji" aria-hidden="true">💥</span><span id="gameOverTitle">Crashed!</span></h2>
+      <div class="new-best-badge hidden" id="newBestBadge">⭐ New personal best</div>
+      <div class="final-score"><span class="label">SCORE</span><b id="finalScoreVal">0</b></div>
       <div class="stat-row">
-        <div class="stat crash"><b id="finalScoreVal">0</b>score</div>
         <div class="stat"><b id="finalCoinsVal">0</b>coins</div>
         <div class="stat"><b id="finalBestVal">0</b>best</div>
+        <div class="stat"><b id="finalTimeVal">0:00</b>time</div>
       </div>
-      <button id="reviveBtn" class="ghost-btn revive-btn">📺 Watch Ad to Continue</button>
-      <button id="retryBtn">Play Again</button>
-      <button class="ghost-btn" id="menuBtn">Main menu</button>
+      <div class="note hidden" id="gameOverNote"></div>
+      <button id="reviveBtn" class="ghost-btn revive-btn" type="button">📺 Watch Ad to Continue</button>
+      <div class="btn-row">
+        <button class="primary-btn" id="retryBtn" type="button" data-autofocus>▶ Play Again</button>
+        <button class="share-btn" id="shareBtn" type="button">📤 Share</button>
+      </div>
+      <button class="ghost-btn" id="menuBtn" type="button">Main menu</button>
     </div>
 
-    <div class="overlay hidden" id="leaderboardOverlay">
-      <div class="big-emoji">🏆</div>
-      <h2>Top Scores</h2>
+    <div class="overlay hidden" id="leaderboardOverlay" role="dialog" aria-labelledby="leaderboardTitle">
+      <div class="big-emoji" aria-hidden="true">🏆</div>
+      <h2 id="leaderboardTitle">Top Scores</h2>
       <ul class="leaderboard-list" id="leaderboardList"></ul>
-      <button class="ghost-btn" id="closeLeaderboardBtn">Close</button>
+      <button class="ghost-btn" id="closeLeaderboardBtn" type="button" data-autofocus>Back</button>
     </div>
 
-    <div class="overlay hidden" id="garageOverlay">
-      <div class="big-emoji">🚘</div>
-      <h2>Garage</h2>
+    <div class="overlay hidden" id="garageOverlay" role="dialog" aria-labelledby="garageTitle">
+      <div class="big-emoji" aria-hidden="true">🚘</div>
+      <h2 id="garageTitle">Garage</h2>
       <div class="wallet-chip">🪙 <span id="walletVal">0</span></div>
       <div class="skin-grid" id="skinGrid"></div>
       <p class="hint">Earn coins by playing runs. Spend them here to unlock car colors.</p>
-      <button class="ghost-btn" id="closeGarageBtn">Close</button>
+      <button class="ghost-btn" id="closeGarageBtn" type="button" data-autofocus>Back</button>
     </div>
 
-    <div class="overlay hidden" id="achievementsOverlay">
-      <div class="big-emoji">🏅</div>
-      <h2>Achievements</h2>
-      <ul class="leaderboard-list" id="achievementsList" style="max-width:280px;"></ul>
-      <button class="ghost-btn" id="closeAchievementsBtn">Close</button>
+    <div class="overlay hidden" id="achievementsOverlay" role="dialog" aria-labelledby="achievementsTitle">
+      <div class="big-emoji" aria-hidden="true">🏅</div>
+      <h2 id="achievementsTitle">Achievements</h2>
+      <p class="panel-sub" id="achievementsCount"></p>
+      <ul class="leaderboard-list" id="achievementsList" style="max-width:300px;"></ul>
+      <button class="ghost-btn" id="closeAchievementsBtn" type="button" data-autofocus>Back</button>
+    </div>
+
+    <div class="top-controls">
+      <button class="icon-btn" id="pauseBtn" type="button" aria-label="Pause game">⏸</button>
+      <button class="icon-btn" id="soundBtn" type="button" aria-label="Mute sound">🔊</button>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to day theme">🌙</button>
     </div>
 
     <div class="touch-controls" aria-hidden="true">
       <div class="touch-btn" id="leftBtn">⟵</div>
       <div class="touch-btn" id="rightBtn">⟶</div>
     </div>
+
+    <div class="sr-only" id="srStatus" role="status" aria-live="polite"></div>
   </div>
 
   <div class="ad-slot" aria-label="advertisement" id="adSlot2">
@@ -685,10 +1037,10 @@
     <ins class="adsbygoogle"
          style="display:block; width:100%; height:100%;"
          data-ad-client="ca-pub-5841910105267784"
-         data-ad-slot="YOUR_AD_SLOT_ID_2"
+         data-ad-slot="7843842676"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <script>(function(){var i=document.currentScript.previousElementSibling;if(i&&!/^YOUR_/.test(i.getAttribute('data-ad-slot')||''))(window.adsbygoogle=window.adsbygoogle||[]).push({});})();</script>
   </div>
 
 </main>
@@ -698,15 +1050,17 @@
   <p>Road Dash is a free online car dodging game you can play instantly in your browser — no download, no install, and no account needed. Steer between three lanes, dodge oncoming traffic, and see how far you can get before you crash. It works on desktop and mobile, and your best score is saved automatically on your device.</p>
 
   <h2>How to play</h2>
-  <p>On desktop, use the ← and → arrow keys (or A and D) to switch lanes. On mobile, swipe left or right on the road, or tap the on-screen arrow buttons. Collect gold coins for bonus points and a growing combo multiplier, and grab the blue shield power-up to smash through one crash for free. The road gets faster the longer you survive, so timing your lane changes matters more the longer your run goes.</p>
+  <p>On desktop, use the ← and → arrow keys (or A and D) to switch lanes. On mobile, swipe left or right on the road, tap the left or right side of the road, or use the on-screen arrow buttons. Collect gold coins for bonus points and a growing combo multiplier, and grab the blue shield power-up to smash through one crash for free. The road gets faster the longer you survive, so timing your lane changes matters more the longer your run goes.</p>
 
   <h2>Features</h2>
   <ul class="seo-list">
     <li>Three difficulty levels — Easy, Normal, and Hard</li>
     <li>Daily play streaks with a starting-shield bonus for returning players</li>
     <li>Unlockable car color skins, bought with coins earned in-game</li>
-    <li>9 achievements to unlock as you play</li>
+    <li>10 achievements to unlock as you play</li>
     <li>A local top-5 leaderboard and day/night visual themes</li>
+    <li>Install it as an app and keep playing offline</li>
+    <li>Share a score card to WhatsApp, Instagram or Facebook and challenge your friends</li>
     <li>Fully responsive — plays the same on phones, tablets, and desktops</li>
   </ul>
 
@@ -716,11 +1070,16 @@
   <h3>Do I need to create an account?</h3>
   <p>No. Your best score, unlocked skins, and achievements are saved locally in your browser — there's no sign-up or login.</p>
   <h3>Can I play Road Dash on my phone?</h3>
-  <p>Yes. The game is fully responsive and supports touch controls (swipe or on-screen buttons) on any phone or tablet.</p>
+  <p>Yes. The game is fully responsive and supports touch controls (swipe, tap the sides of the road, or use the on-screen buttons) on any phone or tablet.</p>
+  <h3>Can I install Road Dash as an app?</h3>
+  <p>Yes. Tap the Install app button to add Road Dash to your home screen or desktop. It launches full screen and keeps working offline.</p>
+  <h3>How do I share my score with friends?</h3>
+  <p>After a run, tap Share to send a ready-made score card to WhatsApp, Instagram, Facebook and more — your friends get a link to challenge your score.</p>
 </section>
 
 <footer>
-  Road Dash — a free browser game. No account, no download.
+  Road Dash — a free browser game. No account, no download required.<br>
+  <a href="privacy.html">Privacy Policy</a>
 </footer>
 
 <div class="toast-stack" id="toastStack" aria-live="polite"></div>
@@ -742,6 +1101,8 @@
   })();
 </script>
 
+<script src="share.js"></script>
+<script src="install.js"></script>
 <script src="game.js"></script>
 </body>
 </html>
